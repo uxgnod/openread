@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { createRoot } from "react-dom/client"
 import { resolveUiLocale, t } from "@/shared/i18n"
 import { sendRuntimeMessage, sendTabMessage } from "@/shared/messages"
@@ -25,9 +25,35 @@ function PopupApp() {
     )
   }, [config, selectedProvider])
 
+  const syncPageProvider = useCallback(async (providerId: string) => {
+    try {
+      const tab = await getActiveTab()
+      if (tab?.id) {
+        await sendTabMessage(tab.id, "SET_PAGE_PROVIDER", {
+          providerId,
+          inputTranslationEnabled: config?.inputTranslationEnabled ?? true,
+          progressPosition: config?.progressPosition ?? "bottom-center",
+          uiLocale: locale,
+        })
+      }
+    }
+    catch {
+      // Browser-owned pages may not have a content script. Translation actions
+      // still surface real failures when the user explicitly starts them.
+    }
+  }, [config?.inputTranslationEnabled, config?.progressPosition, locale])
+
   useEffect(() => {
     void refresh()
   }, [])
+
+  useEffect(() => {
+    if (!config || !selectedProviderId || status?.isActive) {
+      return
+    }
+
+    void syncPageProvider(selectedProviderId)
+  }, [config, selectedProviderId, status?.isActive, syncPageProvider])
 
   async function refresh() {
     const nextConfig = await sendRuntimeMessage("GET_CONFIG")
@@ -67,6 +93,7 @@ function PopupApp() {
       const nextStatus = type === "START_TRANSLATION"
         ? await sendTabMessage(tab.id, type, {
             providerId: selectedProviderId,
+            inputTranslationEnabled: config?.inputTranslationEnabled ?? true,
             progressPosition: config?.progressPosition ?? "bottom-center",
             uiLocale: locale,
           })
@@ -106,7 +133,11 @@ function PopupApp() {
             <select
               value={selectedProviderId}
               disabled={busy || status?.isActive}
-              onChange={event => setSelectedProviderId(event.target.value)}
+              onChange={event => {
+                const providerId = event.target.value
+                setSelectedProviderId(providerId)
+                void syncPageProvider(providerId)
+              }}
             >
               {config.providers.map(provider => (
                 <option key={provider.id} value={provider.id}>

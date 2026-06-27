@@ -58,6 +58,8 @@ tokens:
       - original
       - translation
       - bilingual
+    input_translation_enabled_default: true
+    input_translation_target_default: English
   i18n:
     default_locale: auto
     supported_locales:
@@ -120,9 +122,25 @@ For V1, use these placement rules:
 
 The translation provider receives one sanitized fragment at a time, not the full page HTML. This keeps prompts focused, reduces cost, and makes failures local to one visible fragment.
 
+## Input Translation Experience
+
+Input translation is a writing aid, not part of page reading translation. It is triggered only by explicit user action inside an editable text input or textarea: three consecutive spaces. It must not scan form inputs as part of page translation, because that would waste tokens and surprise the user.
+
+For the current MVP:
+
+- Supported controls are editable `textarea` elements and safe text-like `input` types such as text, search, URL, and telephone.
+- Three spaces translate the current control value and remove the trigger spaces when input translation is enabled.
+- Input translation must have a settings-page switch. The default is enabled, but disabling it should immediately stop OpenRead from intercepting triple-space input.
+- The default input translation target is `English`, independent from the page-reading target language. This avoids reversing the common workflow where page translation is English-to-Chinese but writing assistance is Chinese-to-English.
+- Input translation status should use a floating chip at the user's configured progress position. While translating, show a spinner and localized "input translating" text. After completion, morph into a green success check with localized completion text and an Undo button.
+- Undo should restore the pre-translation input value only if the field still contains the translated value. Do not overwrite user edits made after translation completion.
+- If the user edits the control while translation is in flight, do not overwrite their new text when the provider response returns.
+- Use the popup-selected provider for the current page when available; otherwise fall back to the globally active provider.
+- Automatic dialog language detection and configurable input translation targets are future work, not part of the current MVP behavior.
+
 ## DOM Fidelity Rules
 
-- Never translate OpenRead wrappers, `.notranslate`, `[translate="no"]`, hidden controls, scripts, styles, media, code, or form inputs.
+- Never translate OpenRead wrappers, `.notranslate`, `[translate="no"]`, hidden controls, scripts, styles, media, code, or form inputs as part of page translation. Form inputs may only be translated through explicit input-translation triggers.
 - Preserve original DOM ownership: prefer adding children to the translated element over inserting siblings.
 - Use `notranslate` on all injected translation wrappers to prevent recursive translation.
 - Wrap original child nodes in a reversible `openread-source-wrapper` when needed for display modes. The wrapper should use `display: contents` by default and must be unwrapped on stop.
@@ -184,7 +202,7 @@ Extension UI should be compact and predictable:
 Translated page layout should be conservative:
 
 - Do not override page-wide CSS.
-- Do not introduce floating controls or toolbars in V1.
+- Do not introduce floating controls or toolbars in V1 beyond compact status chips for page and input translation.
 - A compact interactive progress chip is allowed while translation is active.
 - Do not globally reset margins.
 - Use internal translation wrappers to preserve semantic grouping.
@@ -199,6 +217,7 @@ Translated page layout should be conservative:
 - Translation wrapper: marked with `openread-translation-wrapper notranslate`, carries state, and is removed on stop.
 - Source wrapper: marked with `openread-source-wrapper`, wraps original child nodes for display-mode control, uses `display: contents`, and is unwrapped on stop.
 - Progress chip: marked with `openread-progress-chip notranslate`, reports current/total fragments, supports six configured viewport positions, remains visible for the active run, shows a green success check when complete, contains the original/translation/bilingual display switch, and is removed on stop.
+- Input translation listener: listens for three-space triggers in editable text controls, sends the current value as a plain-text fragment, defaults the target language to English, shows a floating localized status chip at the configured progress position, offers undo after completion, and only writes back if the control value has not changed while the request was in flight.
 
 ## Do's And Don'ts
 

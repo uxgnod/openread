@@ -1,10 +1,17 @@
 import { describe, expect, it } from "vitest"
-import { OPENREAD_PROGRESS_CLASS, OPENREAD_SOURCE_CLASS, OPENREAD_WRAPPER_CLASS } from "@/shared/dom-rules"
+import {
+  OPENREAD_INPUT_STATUS_CLASS,
+  OPENREAD_PROGRESS_CLASS,
+  OPENREAD_SOURCE_CLASS,
+  OPENREAD_WRAPPER_CLASS,
+} from "@/shared/dom-rules"
 import {
   applyTranslationDisplayMode,
   createLoadingWrapper,
   removeAllWrappers,
+  removeInputStatus,
   removeTranslationProgress,
+  renderInputStatus,
   renderTranslation,
   renderTranslationProgress,
 } from "./translation-renderer"
@@ -102,6 +109,7 @@ describe("translation renderer", () => {
 
     expect(chip?.dataset.openreadComplete).toBe("true")
     expect(chip?.querySelector(`.${OPENREAD_PROGRESS_CLASS}__status-icon`)).not.toBeNull()
+    expect(chip?.querySelector(`.${OPENREAD_PROGRESS_CLASS}__check-path`)).not.toBeNull()
     expect(chip?.dataset.openreadProgressPercent).toBe("100")
     expect(chip?.querySelector(`.${OPENREAD_PROGRESS_CLASS}__label`)?.textContent).toBe("100%")
 
@@ -184,6 +192,49 @@ describe("translation renderer", () => {
     }
 
     removeTranslationProgress()
+  })
+
+  it("renders input translation status using the configured floating position", () => {
+    renderInputStatus({
+      progressPosition: "bottom-right",
+      status: "loading",
+      uiLocale: "en",
+    })
+
+    const chip = document.querySelector<HTMLElement>(`.${OPENREAD_INPUT_STATUS_CLASS}`)
+
+    expect(chip?.dataset.openreadPosition).toBe("bottom-right")
+    expect(chip?.dataset.openreadStatus).toBe("loading")
+    expect(chip?.textContent).toContain("Translating input")
+    expect(chip?.querySelector(`.${OPENREAD_INPUT_STATUS_CLASS}__status-icon`)).not.toBeNull()
+
+    removeInputStatus()
+  })
+
+  it("renders completed input translation status with undo action", () => {
+    let undone = false
+
+    renderInputStatus({
+      onUndo: () => {
+        undone = true
+      },
+      progressPosition: "top-center",
+      status: "complete",
+      uiLocale: "en",
+    })
+
+    const chip = document.querySelector<HTMLElement>(`.${OPENREAD_INPUT_STATUS_CLASS}`)
+    const undoButton = chip?.querySelector<HTMLButtonElement>(`.${OPENREAD_INPUT_STATUS_CLASS}__undo-button`)
+
+    expect(chip?.dataset.openreadStatus).toBe("complete")
+    expect(chip?.textContent).toContain("Input translation complete")
+    expect(chip?.querySelector(`.${OPENREAD_INPUT_STATUS_CLASS}__check-path`)).not.toBeNull()
+    expect(undoButton?.textContent).toBe("Undo")
+
+    undoButton?.click()
+    expect(undone).toBe(true)
+
+    removeInputStatus()
   })
 
   it("applies translation display mode on the document element", () => {

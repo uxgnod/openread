@@ -6,5 +6,6 @@ describe("default user config", () => {
     expect(DEFAULT_USER_CONFIG.progressPosition).toBe("bottom-center")
     expect(PROGRESS_POSITIONS).toContain(DEFAULT_USER_CONFIG.progressPosition)
     expect(DEFAULT_USER_CONFIG.uiLocale).toBe("auto")
+    expect(DEFAULT_USER_CONFIG.inputTranslationEnabled).toBe(true)
   })
 })

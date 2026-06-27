@@ -33,7 +33,7 @@ async function handleRuntimeMessage(message: OpenReadMessage): Promise<ResponseM
     case "TRANSLATE_FRAGMENT":
       return queue.enqueue(async () => {
         const config = await getConfig()
-        assertUsableConfig(config, message.payload.providerId)
+        assertUsableConfig(config, message.payload.providerId, message.payload.targetLanguage)
         const key = await translationCacheKey(config, message.payload)
         const cached = await getCachedTranslation(key)
         if (cached) {

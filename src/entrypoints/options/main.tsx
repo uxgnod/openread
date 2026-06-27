@@ -202,6 +202,13 @@ function OptionsApp() {
           />
         </Field>
 
+        <SwitchField
+          label={t(locale, "inputTranslationSwitch")}
+          description={t(locale, "inputTranslationDescription")}
+          checked={config.inputTranslationEnabled}
+          onChange={checked => updateField("inputTranslationEnabled", checked)}
+        />
+
         <Field label={t(locale, "interfaceLanguage")}>
           <select
             value={config.uiLocale}
@@ -355,6 +362,35 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     <label className="field">
       <span>{label}</span>
       {children}
+    </label>
+  )
+}
+
+function SwitchField({
+  label,
+  description,
+  checked,
+  onChange,
+}: {
+  label: string
+  description: string
+  checked: boolean
+  onChange: (checked: boolean) => void
+}) {
+  return (
+    <label className="switch-field">
+      <span className="switch-copy">
+        <strong>{label}</strong>
+        <span>{description}</span>
+      </span>
+      <span className="switch-control">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={event => onChange(event.target.checked)}
+        />
+        <span aria-hidden="true" />
+      </span>
     </label>
   )
 }

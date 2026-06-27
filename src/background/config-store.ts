@@ -24,7 +24,11 @@ export async function saveConfig(config: UserConfig): Promise<UserConfig> {
   return normalized
 }
 
-export function assertUsableConfig(config: UserConfig, providerId?: string): void {
+export function assertUsableConfig(
+  config: UserConfig,
+  providerId?: string,
+  targetLanguageOverride?: string,
+): void {
   const provider = getProviderById(config, providerId)
   if (!provider.baseUrl.trim()) {
     throw new Error("Base URL is required.")
@@ -32,7 +36,7 @@ export function assertUsableConfig(config: UserConfig, providerId?: string): voi
   if (!provider.model.trim()) {
     throw new Error("Model is required.")
   }
-  if (!config.targetLanguage.trim()) {
+  if (!(targetLanguageOverride?.trim() || config.targetLanguage.trim())) {
     throw new Error("Target language is required.")
   }
   if (!provider.apiKey.trim()) {
@@ -49,6 +53,9 @@ function normalizeConfig(raw: LegacyStoredConfig | undefined): UserConfig {
   return {
     providers,
     activeProviderId,
+    inputTranslationEnabled: typeof raw?.inputTranslationEnabled === "boolean"
+      ? raw.inputTranslationEnabled
+      : DEFAULT_USER_CONFIG.inputTranslationEnabled,
     targetLanguage: (raw?.targetLanguage ?? DEFAULT_USER_CONFIG.targetLanguage).trim(),
     systemPrompt: raw?.systemPrompt ?? DEFAULT_USER_CONFIG.systemPrompt,
     userPrompt: raw?.userPrompt ?? DEFAULT_USER_CONFIG.userPrompt,

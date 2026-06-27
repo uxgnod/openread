@@ -37,6 +37,14 @@ export class PageTranslator {
   private intersectionObserver: IntersectionObserver | null = null
   private mutationObserver: MutationObserver | null = null
 
+  setProviderId(providerId: string | undefined): void {
+    if (this.isActive) {
+      return
+    }
+
+    this.providerId = providerId
+  }
+
   async start(options: StartTranslationRequest): Promise<PageTranslationState> {
     if (this.isActive) {
       return this.getState()

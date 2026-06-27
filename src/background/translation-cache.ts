@@ -7,15 +7,16 @@ type CacheMap = Record<string, TranslationCacheEntry>
 
 export async function translationCacheKey(
   config: UserConfig,
-  fragment: Pick<TranslateFragmentRequest, "providerId" | "sourceHtml" | "sourceText">,
+  fragment: Pick<TranslateFragmentRequest, "providerId" | "sourceHtml" | "sourceText" | "targetLanguage">,
 ): Promise<string> {
   const provider = getProviderById(config, fragment.providerId)
   const prompt = buildProviderPrompt(config, fragment)
+  const targetLanguage = fragment.targetLanguage?.trim() || config.targetLanguage
   return sha256(JSON.stringify({
     providerId: provider.id,
     baseUrl: provider.baseUrl,
     model: provider.model,
-    targetLanguage: config.targetLanguage,
+    targetLanguage,
     sourceHtml: fragment.sourceHtml,
     systemPrompt: prompt.system,
     userPrompt: prompt.user,

@@ -25,6 +25,36 @@ describe("openai compatible provider", () => {
     expect(fetcher).toHaveBeenCalledOnce()
   })
 
+  it("uses a request-level target language override in provider prompts", async () => {
+    let requestBody: unknown
+    const fetcher = vi.fn(async (_url, init) => {
+      requestBody = JSON.parse(String(init?.body))
+      return new Response(JSON.stringify({
+        choices: [{ message: { content: "Hello" } }],
+      }), { status: 200 })
+    })
+
+    await translateWithOpenAICompatible(
+      {
+        ...DEFAULT_USER_CONFIG,
+        targetLanguage: "Simplified Chinese",
+        systemPrompt: "Translate to {{targetLanguage}}",
+        providers: [{ ...DEFAULT_USER_CONFIG.providers[0], apiKey: "test-key" }],
+      },
+      {
+        id: "1",
+        providerId: DEFAULT_USER_CONFIG.providers[0].id,
+        sourceHtml: "你好",
+        sourceText: "你好",
+        targetLanguage: "English",
+      },
+      fetcher as unknown as typeof fetch,
+    )
+
+    expect((requestBody as { messages: Array<{ content: string; role: string }> }).messages[0])
+      .toMatchObject({ role: "system", content: "Translate to English" })
+  })
+
   it("surfaces provider errors", async () => {
     const fetcher = vi.fn(async () => new Response(JSON.stringify({
       error: { message: "bad key" },

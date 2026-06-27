@@ -11,6 +11,7 @@ export interface ProviderConfig {
 export interface UserConfig {
   providers: ProviderConfig[]
   activeProviderId: string
+  inputTranslationEnabled: boolean
   targetLanguage: string
   systemPrompt: string
   userPrompt: string
@@ -23,10 +24,19 @@ export interface TranslateFragmentRequest {
   providerId: string
   sourceHtml: string
   sourceText: string
+  targetLanguage?: string
 }
 
 export interface StartTranslationRequest {
   providerId: string
+  inputTranslationEnabled: boolean
+  progressPosition: ProgressPosition
+  uiLocale: UiLocale
+}
+
+export interface SetPageProviderRequest {
+  providerId: string
+  inputTranslationEnabled: boolean
   progressPosition: ProgressPosition
   uiLocale: UiLocale
 }
@@ -107,6 +117,7 @@ export const DEFAULT_PROVIDER_CONFIG: ProviderConfig = {
 export const DEFAULT_USER_CONFIG: UserConfig = {
   providers: [DEFAULT_PROVIDER_CONFIG],
   activeProviderId: DEFAULT_PROVIDER_CONFIG.id,
+  inputTranslationEnabled: true,
   targetLanguage: "Simplified Chinese",
   systemPrompt: DEFAULT_SYSTEM_PROMPT,
   userPrompt: DEFAULT_USER_PROMPT,

@@ -23,6 +23,7 @@ Already implemented:
 - Best-effort bilingual DOM rendering with links, emphasis, spans, inline code, and some source styles preserved.
 - Reading display modes: original, translation-only, and bilingual.
 - Progress chip with position settings, percentage progress, and completion animation.
+- Toggleable triple-space input translation for text inputs and textareas, currently translating input content to English by default, with floating status and undo.
 - Built-in UI i18n for 10 interface languages.
 - Stop translation cleanup for injected wrappers and page state.
 
@@ -39,6 +40,7 @@ Already implemented:
 - 尽力保留 DOM 语义和样式的双语渲染，包括链接、强调、span、inline code 和部分源样式。
 - 阅读显示模式：原文、仅译文、双语。
 - 支持位置设置、百分比进度和完成动画的进度 chip。
+- 可开关的输入框三击空格翻译：支持 text input 和 textarea，目前默认把输入内容翻译成英文，并提供浮动状态和撤销。
 - 内置界面文本 i18n，当前支持 10 种界面语言。
 - 停止翻译时清理注入 wrapper 和页面状态。
 
@@ -86,6 +88,7 @@ Implemented in the current MVP:
 - Bilingual rendering with best-effort DOM fidelity.
 - Original / translation / bilingual display modes.
 - Progress chip with percentage and completion animation.
+- Toggleable triple-space input and textarea translation to English, including floating progress/completion status and undo.
 - Basic i18n for extension UI.
 
 当前 MVP 已实现：
@@ -96,13 +99,17 @@ Implemented in the current MVP:
 - 尽力保留 DOM 的双语渲染。
 - 原文 / 译文 / 双语显示模式。
 - 百分比进度 chip 和完成动画。
+- 可开关的输入框和 textarea 三击空格翻译成英文，包含浮动进度/完成状态和撤销。
 - 扩展 UI 的基础 i18n。
 
 Planned:
 
 - Better visibility rules so hidden or irrelevant DOM is not counted or translated.
 - Faster concurrent translation with smarter batching, request scheduling, and cache reuse.
-- Triple-space input translation: press space three times in an input box or textarea to translate the current input content.
+- Configurable input translation target language.
+- Automatic dialog/input language detection for chat, comments, and reply boxes.
+- Automatic page-language detection for choosing page translation targets.
+- Dark-mode-aware styling for the floating page progress chip and input translation status chip.
 - Automatic translation for video websites, including subtitles and possibly transcript panels.
 - Floating page toolbar for quick translation controls.
 - DOM inspector and multi-select translation regions.
@@ -117,7 +124,10 @@ Planned:
 
 - 更严格的可见性判断，避免隐藏或无关 DOM 进入统计和翻译流程。
 - 更快的并发翻译：更智能的 batching、请求调度和缓存复用。
-- 输入框三击空格翻译：在 input 或 textarea 里连续按三次空格，翻译当前输入内容。
+- 可配置的输入框翻译目标语言。
+- 针对聊天、评论、回复框等场景的对话/输入语言自动识别。
+- 自动识别页面语言，并据此选择网页翻译目标语言。
+- 为页面进度提示框和输入翻译状态框补充 dark mode 适配。
 - 视频网站自动翻译，包括字幕，未来也可能支持 transcript 面板。
 - 页面浮动工具栏，用于快速控制翻译。
 - DOM inspector 和多选翻译区域。

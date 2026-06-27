@@ -1,5 +1,6 @@
 import {
   OPENREAD_ERROR_CLASS,
+  OPENREAD_INPUT_STATUS_CLASS,
   OPENREAD_LOADING_CLASS,
   OPENREAD_PROGRESS_CLASS,
   OPENREAD_SOURCE_CLASS,
@@ -33,6 +34,14 @@ interface TranslationProgress {
   remainingCount: number
   totalCount: number
   translatedCount: number
+  uiLocale: UiLocale
+}
+
+interface InputTranslationStatus {
+  message?: string
+  onUndo?: () => void
+  progressPosition: ProgressPosition
+  status: "loading" | "complete" | "error"
   uiLocale: UiLocale
 }
 
@@ -129,37 +138,43 @@ export function injectBaseStyles(): void {
       z-index: 2147483647;
     }
 
-    .${OPENREAD_PROGRESS_CLASS}[data-openread-position="top-center"] {
+    .${OPENREAD_PROGRESS_CLASS}[data-openread-position="top-center"],
+    .${OPENREAD_INPUT_STATUS_CLASS}[data-openread-position="top-center"] {
       left: 50%;
       top: max(16px, env(safe-area-inset-top));
       transform: translateX(-50%);
     }
 
-    .${OPENREAD_PROGRESS_CLASS}[data-openread-position="bottom-center"] {
+    .${OPENREAD_PROGRESS_CLASS}[data-openread-position="bottom-center"],
+    .${OPENREAD_INPUT_STATUS_CLASS}[data-openread-position="bottom-center"] {
       bottom: max(16px, env(safe-area-inset-bottom));
       left: 50%;
       transform: translateX(-50%);
     }
 
-    .${OPENREAD_PROGRESS_CLASS}[data-openread-position="top-left"] {
+    .${OPENREAD_PROGRESS_CLASS}[data-openread-position="top-left"],
+    .${OPENREAD_INPUT_STATUS_CLASS}[data-openread-position="top-left"] {
       left: max(16px, env(safe-area-inset-left));
       top: max(16px, env(safe-area-inset-top));
       transform: none;
     }
 
-    .${OPENREAD_PROGRESS_CLASS}[data-openread-position="top-right"] {
+    .${OPENREAD_PROGRESS_CLASS}[data-openread-position="top-right"],
+    .${OPENREAD_INPUT_STATUS_CLASS}[data-openread-position="top-right"] {
       right: max(16px, env(safe-area-inset-right));
       top: max(16px, env(safe-area-inset-top));
       transform: none;
     }
 
-    .${OPENREAD_PROGRESS_CLASS}[data-openread-position="bottom-left"] {
+    .${OPENREAD_PROGRESS_CLASS}[data-openread-position="bottom-left"],
+    .${OPENREAD_INPUT_STATUS_CLASS}[data-openread-position="bottom-left"] {
       bottom: max(16px, env(safe-area-inset-bottom));
       left: max(16px, env(safe-area-inset-left));
       transform: none;
     }
 
-    .${OPENREAD_PROGRESS_CLASS}[data-openread-position="bottom-right"] {
+    .${OPENREAD_PROGRESS_CLASS}[data-openread-position="bottom-right"],
+    .${OPENREAD_INPUT_STATUS_CLASS}[data-openread-position="bottom-right"] {
       bottom: max(16px, env(safe-area-inset-bottom));
       right: max(16px, env(safe-area-inset-right));
       transform: none;
@@ -195,15 +210,29 @@ export function injectBaseStyles(): void {
     }
 
     .${OPENREAD_PROGRESS_CLASS}[data-openread-complete="true"] .${OPENREAD_PROGRESS_CLASS}__status-icon::after {
-      border-bottom: 2px solid #ffffff;
-      border-right: 2px solid #ffffff;
-      content: "";
-      height: 9px;
-      left: 7px;
+      content: none;
+    }
+
+    .${OPENREAD_PROGRESS_CLASS}__status-icon svg,
+    .${OPENREAD_INPUT_STATUS_CLASS}__status-icon svg {
+      display: block;
+      height: 100%;
+      inset: 0;
+      overflow: visible;
       position: absolute;
-      top: 3px;
-      transform: rotate(45deg);
-      width: 5px;
+      width: 100%;
+    }
+
+    .${OPENREAD_PROGRESS_CLASS}__check-path,
+    .${OPENREAD_INPUT_STATUS_CLASS}__check-path {
+      animation: openread-check-draw 360ms 140ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      fill: none;
+      stroke: #ffffff;
+      stroke-dasharray: 18;
+      stroke-dashoffset: 18;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 2.6;
     }
 
     .${OPENREAD_PROGRESS_CLASS}__status {
@@ -277,6 +306,89 @@ export function injectBaseStyles(): void {
       color: #111827;
     }
 
+    .${OPENREAD_INPUT_STATUS_CLASS} {
+      align-items: center;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(229, 231, 235, 0.92);
+      border-radius: 999px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+      color: #5b6472;
+      display: flex;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      font-weight: 650;
+      gap: 10px;
+      line-height: 1.2;
+      max-width: min(520px, calc(100vw - 32px));
+      min-height: 44px;
+      padding: 7px 9px 7px 15px;
+      pointer-events: auto;
+      position: fixed;
+      white-space: nowrap;
+      z-index: 2147483647;
+    }
+
+    .${OPENREAD_INPUT_STATUS_CLASS}__status-icon {
+      border: 3px solid #dbeafe;
+      border-top-color: #93c5fd;
+      border-radius: 999px;
+      box-sizing: border-box;
+      display: inline-block;
+      flex: 0 0 auto;
+      height: 22px;
+      position: relative;
+      transition:
+        background-color 220ms ease,
+        border-color 220ms ease,
+        box-shadow 260ms ease,
+        transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      width: 22px;
+    }
+
+    .${OPENREAD_INPUT_STATUS_CLASS}[data-openread-status="loading"] .${OPENREAD_INPUT_STATUS_CLASS}__status-icon {
+      animation: openread-progress-spin 0.9s linear infinite;
+    }
+
+    .${OPENREAD_INPUT_STATUS_CLASS}[data-openread-status="complete"] .${OPENREAD_INPUT_STATUS_CLASS}__status-icon {
+      animation: openread-progress-complete 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      background: #34c759;
+      border-color: #34c759;
+      box-shadow: 0 0 0 4px rgba(52, 199, 89, 0.14);
+    }
+
+    .${OPENREAD_INPUT_STATUS_CLASS}[data-openread-status="complete"] .${OPENREAD_INPUT_STATUS_CLASS}__status-icon::after {
+      content: none;
+    }
+
+    .${OPENREAD_INPUT_STATUS_CLASS}[data-openread-status="error"] {
+      background: #fef3f2;
+      border-color: #fecdca;
+      color: #b42318;
+    }
+
+    .${OPENREAD_INPUT_STATUS_CLASS}[data-openread-status="error"] .${OPENREAD_INPUT_STATUS_CLASS}__status-icon {
+      border-color: #f97066;
+    }
+
+    .${OPENREAD_INPUT_STATUS_CLASS}__label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .${OPENREAD_INPUT_STATUS_CLASS}__undo-button {
+      background: #111827;
+      border: 0;
+      border-radius: 999px;
+      color: #ffffff;
+      cursor: pointer;
+      flex: 0 0 auto;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 650;
+      line-height: 1.2;
+      padding: 7px 11px;
+    }
+
     @keyframes openread-progress-spin {
       to {
         transform: rotate(360deg);
@@ -297,6 +409,12 @@ export function injectBaseStyles(): void {
       100% {
         transform: scale(1);
         box-shadow: 0 0 0 4px rgba(52, 199, 89, 0.14);
+      }
+    }
+
+    @keyframes openread-check-draw {
+      to {
+        stroke-dashoffset: 0;
       }
     }
   `
@@ -403,6 +521,9 @@ export function renderTranslationProgress(progress: TranslationProgress): void {
   const statusIcon = document.createElement("span")
   statusIcon.className = `${OPENREAD_PROGRESS_CLASS}__status-icon`
   statusIcon.setAttribute("aria-hidden", "true")
+  if (isComplete) {
+    statusIcon.appendChild(createCheckSvg(`${OPENREAD_PROGRESS_CLASS}__check-path`))
+  }
 
   const label = document.createElement("span")
   label.className = `${OPENREAD_PROGRESS_CLASS}__label`
@@ -428,6 +549,44 @@ export function renderTranslationProgress(progress: TranslationProgress): void {
 
 export function removeTranslationProgress(): void {
   document.querySelector(`.${OPENREAD_PROGRESS_CLASS}`)?.remove()
+}
+
+export function renderInputStatus(status: InputTranslationStatus): HTMLElement {
+  const chip = getOrCreateInputStatus()
+  chip.dataset.openreadPosition = status.progressPosition
+  chip.dataset.openreadStatus = status.status
+  chip.setAttribute("aria-live", "polite")
+
+  const icon = document.createElement("span")
+  icon.className = `${OPENREAD_INPUT_STATUS_CLASS}__status-icon`
+  icon.setAttribute("aria-hidden", "true")
+  if (status.status === "complete") {
+    icon.appendChild(createCheckSvg(`${OPENREAD_INPUT_STATUS_CLASS}__check-path`))
+  }
+
+  const label = document.createElement("span")
+  label.className = `${OPENREAD_INPUT_STATUS_CLASS}__label`
+  label.textContent = inputStatusLabel(status)
+
+  chip.replaceChildren(icon, label)
+
+  if (status.status === "complete" && status.onUndo) {
+    const undoButton = document.createElement("button")
+    undoButton.type = "button"
+    undoButton.className = `${OPENREAD_INPUT_STATUS_CLASS}__undo-button`
+    undoButton.textContent = t(status.uiLocale, "undoInputTranslation")
+    undoButton.addEventListener("click", event => {
+      event.stopPropagation()
+      status.onUndo?.()
+    })
+    chip.appendChild(undoButton)
+  }
+
+  return chip
+}
+
+export function removeInputStatus(): void {
+  document.querySelector(`.${OPENREAD_INPUT_STATUS_CLASS}`)?.remove()
 }
 
 export function applyTranslationDisplayMode(mode: TranslationDisplayMode): void {
@@ -470,6 +629,47 @@ function getOrCreateProgressChip(): HTMLElement {
   chip.setAttribute("role", "group")
   document.documentElement.appendChild(chip)
   return chip
+}
+
+function getOrCreateInputStatus(): HTMLElement {
+  const existing = document.querySelector<HTMLElement>(`.${OPENREAD_INPUT_STATUS_CLASS}`)
+  if (existing) {
+    return existing
+  }
+
+  const chip = document.createElement("div")
+  chip.className = `${OPENREAD_INPUT_STATUS_CLASS} notranslate`
+  chip.setAttribute("role", "group")
+  document.documentElement.appendChild(chip)
+  return chip
+}
+
+function createCheckSvg(pathClassName: string): SVGSVGElement {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+  svg.setAttribute("viewBox", "0 0 22 22")
+  svg.setAttribute("focusable", "false")
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path")
+  path.setAttribute("class", pathClassName)
+  path.setAttribute("d", "M6.2 11.2l3.2 3.2 6.6-7.1")
+  svg.appendChild(path)
+
+  return svg
+}
+
+function inputStatusLabel(status: InputTranslationStatus): string {
+  if (status.message) {
+    return status.message
+  }
+
+  switch (status.status) {
+    case "loading":
+      return t(status.uiLocale, "inputTranslating")
+    case "complete":
+      return t(status.uiLocale, "inputTranslationComplete")
+    case "error":
+      return t(status.uiLocale, "translationFailed", { message: "" }).trim()
+  }
 }
 
 function getTranslationPlacement(target: HTMLElement): "inline" | "inside-block" | "after-block" {

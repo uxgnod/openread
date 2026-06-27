@@ -16,10 +16,10 @@ export function renderPromptTemplate(
 
 export function buildProviderPrompt(
   config: UserConfig,
-  fragment: { sourceHtml: string; sourceText: string },
+  fragment: { sourceHtml: string; sourceText: string; targetLanguage?: string },
 ): ProviderPrompt {
   const values = {
-    targetLanguage: config.targetLanguage,
+    targetLanguage: fragment.targetLanguage?.trim() || config.targetLanguage,
     sourceHtml: fragment.sourceHtml,
     sourceText: fragment.sourceText,
   }

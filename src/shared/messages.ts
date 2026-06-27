@@ -1,5 +1,6 @@
 import type {
   PageTranslationState,
+  SetPageProviderRequest,
   StartTranslationRequest,
   TestProviderResponse,
   TranslateFragmentRequest,
@@ -12,6 +13,7 @@ export interface RequestMap {
   SAVE_CONFIG: UserConfig
   TEST_PROVIDER: UserConfig
   TRANSLATE_FRAGMENT: TranslateFragmentRequest
+  SET_PAGE_PROVIDER: SetPageProviderRequest
   START_TRANSLATION: StartTranslationRequest
   STOP_TRANSLATION: undefined
   GET_PAGE_TRANSLATION_STATE: undefined
@@ -22,6 +24,7 @@ export interface ResponseMap {
   SAVE_CONFIG: UserConfig
   TEST_PROVIDER: TestProviderResponse
   TRANSLATE_FRAGMENT: TranslateFragmentResponse
+  SET_PAGE_PROVIDER: PageTranslationState
   START_TRANSLATION: PageTranslationState
   STOP_TRANSLATION: PageTranslationState
   GET_PAGE_TRANSLATION_STATE: PageTranslationState
