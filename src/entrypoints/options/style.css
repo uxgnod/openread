@@ -1,0 +1,273 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 720px;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f8fafc;
+  color: #111827;
+}
+
+.settings-page {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 280px minmax(0, 720px);
+  margin: 0 auto;
+  max-width: 1080px;
+  padding: 40px 28px;
+}
+
+.intro h1 {
+  font-size: 30px;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.intro p {
+  color: #667085;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 14px 0 0;
+}
+
+.settings-form {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+}
+
+.field span {
+  color: #344054;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+input,
+textarea,
+select {
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  color: #111827;
+  font: inherit;
+  font-size: 14px;
+  padding: 10px 12px;
+  width: 100%;
+}
+
+textarea {
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.two-column {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.variables {
+  align-items: center;
+  background: #f9fafb;
+  border: 1px solid #eef2f6;
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+}
+
+.provider-section,
+.provider-editor {
+  display: grid;
+  gap: 14px;
+}
+
+.section-heading {
+  align-items: start;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+}
+
+.section-heading.compact {
+  align-items: center;
+}
+
+.provider-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.section-heading h2 {
+  font-size: 16px;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.section-heading p {
+  color: #667085;
+  font-size: 13px;
+  line-height: 1.45;
+  margin: 5px 0 0;
+}
+
+.provider-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.provider-tab {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  color: #344054;
+  display: grid;
+  gap: 2px;
+  justify-items: start;
+  min-width: 140px;
+}
+
+.provider-tab.active {
+  background: #eef2ff;
+  border-color: #818cf8;
+  color: #312e81;
+}
+
+.provider-tab strong,
+.provider-tab span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.provider-tab span {
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.75;
+}
+
+.secondary-button,
+.danger-button {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.danger-button {
+  background: #fee4e2;
+  color: #b42318;
+}
+
+.provider-test {
+  align-items: start;
+  border-radius: 8px;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 10px 12px;
+}
+
+.provider-test strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.provider-test p {
+  font-size: 13px;
+  line-height: 1.45;
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.provider-test.success {
+  background: #ecfdf3;
+  color: #027a48;
+}
+
+.provider-test.testing {
+  background: #f9fafb;
+  color: #344054;
+}
+
+.provider-test.error {
+  background: #fef3f2;
+  color: #b42318;
+}
+
+.provider-test .secondary-button {
+  flex: 0 0 auto;
+}
+
+.variables strong {
+  color: #344054;
+  font-size: 13px;
+  margin-right: 4px;
+}
+
+code {
+  background: #eef2ff;
+  border-radius: 6px;
+  color: #3730a3;
+  font-size: 12px;
+  padding: 4px 7px;
+}
+
+button {
+  justify-self: start;
+  border: 0;
+  border-radius: 8px;
+  background: #111827;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  padding: 10px 14px;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.success,
+.error {
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 0;
+  padding: 10px 12px;
+}
+
+.success {
+  background: #ecfdf3;
+  color: #027a48;
+}
+
+.error {
+  background: #fef3f2;
+  color: #b42318;
+}
+
+@media (max-width: 820px) {
+  body {
+    min-width: 0;
+  }
+
+  .settings-page,
+  .two-column {
+    grid-template-columns: 1fr;
+  }
+}
