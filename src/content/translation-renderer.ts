@@ -84,13 +84,13 @@ export function injectBaseStyles(): void {
     }
 
     .${OPENREAD_LOADING_CLASS} {
-      color: #667085;
+      color: #87867f;
       font-style: italic;
     }
 
     .${OPENREAD_ERROR_CLASS} {
-      color: #b42318;
-      border-left: 3px solid #f97066;
+      color: #9f3d2b;
+      border-left: 3px solid #d97757;
       padding-left: 0.65em;
     }
 
@@ -119,11 +119,11 @@ export function injectBaseStyles(): void {
 
     .${OPENREAD_PROGRESS_CLASS} {
       align-items: center;
-      background: rgba(255, 255, 255, 0.94);
-      border: 1px solid rgba(229, 231, 235, 0.92);
+      background: rgba(244, 241, 232, 0.96);
+      border: 1px solid rgba(216, 210, 194, 0.92);
       border-radius: 999px;
-      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.1);
-      color: #5b6472;
+      box-shadow: 0 12px 32px rgba(20, 20, 19, 0.14);
+      color: #3d3d3a;
       display: flex;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       font-size: 16px;
@@ -181,8 +181,8 @@ export function injectBaseStyles(): void {
     }
 
     .${OPENREAD_PROGRESS_CLASS}__status-icon {
-      border: 3px solid #dbeafe;
-      border-top-color: #93c5fd;
+      border: 3px solid #f0d5c8;
+      border-top-color: #d97757;
       border-radius: 999px;
       box-sizing: border-box;
       display: inline-block;
@@ -203,9 +203,9 @@ export function injectBaseStyles(): void {
 
     .${OPENREAD_PROGRESS_CLASS}[data-openread-complete="true"] .${OPENREAD_PROGRESS_CLASS}__status-icon {
       animation: none;
-      background: #34c759;
-      border-color: #34c759;
-      box-shadow: 0 0 0 4px rgba(52, 199, 89, 0.14);
+      background: #5f7f3f;
+      border-color: #5f7f3f;
+      box-shadow: 0 0 0 4px rgba(95, 127, 63, 0.14);
       animation: openread-progress-complete 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
     }
 
@@ -271,15 +271,15 @@ export function injectBaseStyles(): void {
     }
 
     .${OPENREAD_PROGRESS_CLASS}__divider {
-      background: #e5e7eb;
+      background: #d8d2c2;
       height: 24px;
       width: 1px;
     }
 
     .${OPENREAD_PROGRESS_CLASS}__mode-switch {
       align-items: center;
-      background: #f2f4f7;
-      border: 1px solid #e5e7eb;
+      background: #e8e6dc;
+      border: 1px solid #d8d2c2;
       border-radius: 999px;
       display: flex;
       gap: 2px;
@@ -290,7 +290,7 @@ export function injectBaseStyles(): void {
       background: transparent;
       border: 0;
       border-radius: 999px;
-      color: #667085;
+      color: #6f6b62;
       cursor: pointer;
       font: inherit;
       font-size: 12px;
@@ -301,18 +301,18 @@ export function injectBaseStyles(): void {
     }
 
     .${OPENREAD_PROGRESS_CLASS}__mode-button[data-openread-active="true"] {
-      background: #ffffff;
-      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
-      color: #111827;
+      background: #fffdf7;
+      box-shadow: 0 1px 3px rgba(20, 20, 19, 0.14);
+      color: #141413;
     }
 
     .${OPENREAD_INPUT_STATUS_CLASS} {
       align-items: center;
-      background: rgba(255, 255, 255, 0.96);
-      border: 1px solid rgba(229, 231, 235, 0.92);
+      background: rgba(244, 241, 232, 0.96);
+      border: 1px solid rgba(216, 210, 194, 0.92);
       border-radius: 999px;
-      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
-      color: #5b6472;
+      box-shadow: 0 12px 32px rgba(20, 20, 19, 0.14);
+      color: #3d3d3a;
       display: flex;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       font-size: 15px;
@@ -329,8 +329,8 @@ export function injectBaseStyles(): void {
     }
 
     .${OPENREAD_INPUT_STATUS_CLASS}__status-icon {
-      border: 3px solid #dbeafe;
-      border-top-color: #93c5fd;
+      border: 3px solid #f0d5c8;
+      border-top-color: #d97757;
       border-radius: 999px;
       box-sizing: border-box;
       display: inline-block;
@@ -351,9 +351,9 @@ export function injectBaseStyles(): void {
 
     .${OPENREAD_INPUT_STATUS_CLASS}[data-openread-status="complete"] .${OPENREAD_INPUT_STATUS_CLASS}__status-icon {
       animation: openread-progress-complete 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
-      background: #34c759;
-      border-color: #34c759;
-      box-shadow: 0 0 0 4px rgba(52, 199, 89, 0.14);
+      background: #5f7f3f;
+      border-color: #5f7f3f;
+      box-shadow: 0 0 0 4px rgba(95, 127, 63, 0.14);
     }
 
     .${OPENREAD_INPUT_STATUS_CLASS}[data-openread-status="complete"] .${OPENREAD_INPUT_STATUS_CLASS}__status-icon::after {
@@ -361,13 +361,13 @@ export function injectBaseStyles(): void {
     }
 
     .${OPENREAD_INPUT_STATUS_CLASS}[data-openread-status="error"] {
-      background: #fef3f2;
-      border-color: #fecdca;
-      color: #b42318;
+      background: #fff1ea;
+      border-color: #f2c8b9;
+      color: #9f3d2b;
     }
 
     .${OPENREAD_INPUT_STATUS_CLASS}[data-openread-status="error"] .${OPENREAD_INPUT_STATUS_CLASS}__status-icon {
-      border-color: #f97066;
+      border-color: #d97757;
     }
 
     .${OPENREAD_INPUT_STATUS_CLASS}__label {
@@ -376,7 +376,7 @@ export function injectBaseStyles(): void {
     }
 
     .${OPENREAD_INPUT_STATUS_CLASS}__undo-button {
-      background: #111827;
+      background: #141413;
       border: 0;
       border-radius: 999px;
       color: #ffffff;
@@ -398,17 +398,17 @@ export function injectBaseStyles(): void {
     @keyframes openread-progress-complete {
       0% {
         transform: scale(0.78);
-        box-shadow: 0 0 0 0 rgba(52, 199, 89, 0);
+        box-shadow: 0 0 0 0 rgba(95, 127, 63, 0);
       }
 
       55% {
         transform: scale(1.18);
-        box-shadow: 0 0 0 7px rgba(52, 199, 89, 0.16);
+        box-shadow: 0 0 0 7px rgba(95, 127, 63, 0.16);
       }
 
       100% {
         transform: scale(1);
-        box-shadow: 0 0 0 4px rgba(52, 199, 89, 0.14);
+        box-shadow: 0 0 0 4px rgba(95, 127, 63, 0.14);
       }
     }
 

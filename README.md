@@ -155,6 +155,36 @@ Production build:
 pnpm build
 ```
 
+Package a Chrome MV3 zip for manual testing or GitHub Releases:
+
+```bash
+pnpm zip
+```
+
+## Manual Install from GitHub Release / 从 GitHub Release 手动安装
+
+GitHub Release builds are developer-mode packages for early testing. They are not a Chrome Web Store one-click install.
+
+1. Download the release zip, for example `openread-chrome-mv3-v0.1.0.zip`.
+2. Unzip it locally.
+3. Open `chrome://extensions`.
+4. Enable **Developer mode**.
+5. Click **Load unpacked**.
+6. Select the unzipped extension directory.
+
+For regular users, the intended distribution channel will be the Chrome Web Store after review.
+
+GitHub Release 中的构建包用于早期测试，需要通过开发者模式手动加载，并不是 Chrome Web Store 的一键安装。
+
+1. 下载 release zip，例如 `openread-chrome-mv3-v0.1.0.zip`。
+2. 在本地解压。
+3. 打开 `chrome://extensions`。
+4. 启用 **Developer mode / 开发者模式**。
+5. 点击 **Load unpacked / 加载已解压的扩展程序**。
+6. 选择解压后的扩展目录。
+
+面向普通用户的正式分发渠道会是审核后的 Chrome Web Store。
+
 ## Validation / 验证
 
 ```bash
@@ -212,6 +242,12 @@ Interface languages:
 ## Architecture / 架构
 
 See [docs/architecture.md](docs/architecture.md).
+
+## Branding / 品牌
+
+See [BRANDING.md](BRANDING.md) for the current slogan, palette, icon direction, and visual rules.
+
+品牌口号、配色、图标方向和视觉规则见 [BRANDING.md](BRANDING.md)。
 
 ## License / 许可证
 

@@ -5,23 +5,30 @@ description: Design system and product principles for OpenRead, an open-source b
 status: draft
 tokens:
   color:
-    canvas: "#f8fafc"
-    surface: "#ffffff"
-    text: "#111827"
-    text_muted: "#667085"
-    text_subtle: "#344054"
-    border: "#e5e7eb"
-    border_strong: "#d0d5dd"
-    primary: "#111827"
-    primary_text: "#ffffff"
-    accent_surface: "#eef2ff"
-    accent: "#3730a3"
-    success_surface: "#ecfdf3"
-    success: "#027a48"
-    warning_surface: "#fff7ed"
-    warning: "#9a3412"
-    danger_surface: "#fef3f2"
-    danger: "#b42318"
+    canvas: "#F0EEE6"
+    surface: "#FFFDF7"
+    surface_muted: "#E8E6DC"
+    text: "#141413"
+    text_muted: "#6F6B62"
+    text_subtle: "#3D3D3A"
+    border: "#D8D2C2"
+    border_strong: "#B8B1A4"
+    brand_ink: "#141413"
+    brand_charcoal: "#3D3D3A"
+    brand_ivory: "#F0EEE6"
+    brand_paper: "#FFFDF7"
+    brand_terracotta: "#D97757"
+    brand_umber: "#8F3F2B"
+    primary: "#D97757"
+    primary_text: "#FFFAF2"
+    accent_surface: "#F4DFD3"
+    accent: "#D97757"
+    success_surface: "#EEF4E8"
+    success: "#5F7F3F"
+    warning_surface: "#FBECD3"
+    warning: "#8A591E"
+    danger_surface: "#FFF1EA"
+    danger: "#9F3D2B"
   typography:
     family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif
     title_size: 30px
@@ -84,6 +91,8 @@ This file is the durable design contract for OpenRead. It follows the spirit of 
 OpenRead is a reading tool before it is a translation widget. Its job is to make a web page bilingual without making the page feel rebuilt, decorated, or interrupted.
 
 The core experience should feel like the translation belongs to the original page. The user should be able to keep reading in place, trust the original structure, stop translation cleanly, and understand provider errors without losing the page.
+
+Brand identity is documented in [BRANDING.md](BRANDING.md). Product UI should follow those tokens, while translated page content should still inherit the host page whenever possible.
 
 ## Product Principles
 
@@ -177,11 +186,13 @@ The extension UI is a compact utility surface. It should feel calm, precise, and
 
 ## Colors
 
-The palette is mostly neutral so translated pages remain visually owned by the website, not by OpenRead. Accent colors should appear in extension UI and error states, not as a page-wide theme.
+The palette is warm and mostly neutral so translated pages remain visually owned by the website, not by OpenRead. Accent colors should appear in extension UI, toolbar identity, and OpenRead-owned status chips, not as a page-wide theme.
 
-- Primary text and actions use `#111827`.
-- Muted explanatory text uses `#667085`.
-- Borders use `#e5e7eb` and `#d0d5dd`.
+- Primary text and high-contrast controls use Ink `#141413`.
+- Primary brand actions and active states use Terracotta `#D97757`.
+- Muted explanatory text uses `#6F6B62` or `#87867F`.
+- Borders use `#D8D2C2` and `#B8B1A4`.
+- Brand-owned surfaces use Ivory `#F0EEE6`, Paper `#FFFDF7`, and Oat `#E8E6DC`.
 - Status colors are reserved for real status: success, warning, and danger.
 
 ## Typography
