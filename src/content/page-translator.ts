@@ -6,8 +6,10 @@ import type {
   StartTranslationRequest,
   TranslationDisplayMode,
 } from "@/shared/types"
+import type { SiteRulePack } from "@/shared/site-rules"
 import { collectTranslatableBlocks } from "./dom-walker"
 import { extractRichFragment } from "./rich-fragment"
+import { collectRuleTranslatableBlocks, selectRuleForCurrentPage } from "./site-rule-engine"
 import {
   applyTranslationDisplayMode,
   createLoadingWrapper,
@@ -30,6 +32,7 @@ export class PageTranslator {
   private progressPosition: ProgressPosition = "bottom-center"
   private uiLocale: UiLocale = "en"
   private displayMode: TranslationDisplayMode = "bilingual"
+  private activeSiteRule: SiteRulePack | undefined
   private translatedCount = 0
   private observedElements = new Set<HTMLElement>()
   private translatedElements = new Set<HTMLElement>()
@@ -55,6 +58,7 @@ export class PageTranslator {
     this.progressPosition = options.progressPosition
     this.uiLocale = options.uiLocale
     this.displayMode = "bilingual"
+    this.activeSiteRule = await this.resolveSiteRule(options)
     this.translatedCount = 0
     this.observedElements = new Set()
     this.translatedElements = new Set()
@@ -101,6 +105,7 @@ export class PageTranslator {
     this.progressPosition = "bottom-center"
     this.uiLocale = "en"
     this.displayMode = "bilingual"
+    this.activeSiteRule = undefined
     this.intersectionObserver?.disconnect()
     this.mutationObserver?.disconnect()
     this.intersectionObserver = null
@@ -116,6 +121,8 @@ export class PageTranslator {
   getState(): PageTranslationState {
     return {
       isActive: this.isActive,
+      activeSiteRuleId: this.activeSiteRule?.id,
+      activeSiteRuleName: this.activeSiteRule?.name,
       providerId: this.providerId,
       translatedCount: this.translatedCount,
       pendingCount: this.records.size,
@@ -130,7 +137,7 @@ export class PageTranslator {
     }
 
     let observedNewElement = false
-    for (const element of collectTranslatableBlocks(root)) {
+    for (const element of this.collectBlocks(root)) {
       if (this.observedElements.has(element) || this.translatedElements.has(element)) {
         continue
       }
@@ -202,6 +209,50 @@ export class PageTranslator {
     finally {
       this.records.delete(id)
       this.updateProgress()
+    }
+  }
+
+  private collectBlocks(root: ParentNode): HTMLElement[] {
+    if (this.activeSiteRule) {
+      return collectRuleTranslatableBlocks(this.activeSiteRule)
+    }
+
+    return collectTranslatableBlocks(root)
+  }
+
+  async refreshSiteRule(): Promise<PageTranslationState> {
+    if (!this.isActive) {
+      return this.getState()
+    }
+
+    this.activeSiteRule = await this.resolveCurrentSiteRule()
+    this.updateProgress()
+    return this.getState()
+  }
+
+  private async resolveSiteRule(options: StartTranslationRequest): Promise<SiteRulePack | undefined> {
+    if (options.inlineSiteRule) {
+      return options.inlineSiteRule
+    }
+
+    try {
+      const rules = await sendRuntimeMessage("GET_SITE_RULES")
+      if (options.siteRuleId) {
+        return rules.find(rule => rule.id === options.siteRuleId && rule.enabled)
+      }
+      return selectRuleForCurrentPage(rules)
+    }
+    catch {
+      return undefined
+    }
+  }
+
+  private async resolveCurrentSiteRule(): Promise<SiteRulePack | undefined> {
+    try {
+      return selectRuleForCurrentPage(await sendRuntimeMessage("GET_SITE_RULES"))
+    }
+    catch {
+      return undefined
     }
   }
 

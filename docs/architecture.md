@@ -40,3 +40,5 @@ OpenRead V1 is intentionally small: deterministic page extraction, configurable 
 ## V2 Direction
 
 The next product layer should add a page floating toolbar, DOM inspector, multi-select translation regions, and reusable site plans. That layer should generate or edit deterministic site plans rather than letting an LLM directly manipulate the live DOM.
+
+The first Site Rules layer is documented in [Site Rules and Agent Tools](site-rules-and-agent-tools.md). It stores deterministic JSON rule packs, exposes rule preview/import/export messages, and lets page translation use saved or inline rules while keeping provider calls and rendering unchanged.

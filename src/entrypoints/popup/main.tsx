@@ -2,12 +2,14 @@ import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { createRoot } from "react-dom/client"
 import { resolveUiLocale, t } from "@/shared/i18n"
 import { sendRuntimeMessage, sendTabMessage } from "@/shared/messages"
+import type { PageSiteRuleStatus } from "@/shared/site-rules"
 import { getProviderById, type PageTranslationState, type UserConfig } from "@/shared/types"
 import "./style.css"
 
-function PopupApp() {
+export function PopupApp() {
   const [config, setConfig] = useState<UserConfig | null>(null)
   const [status, setStatus] = useState<PageTranslationState | null>(null)
+  const [siteRuleStatus, setSiteRuleStatus] = useState<PageSiteRuleStatus>({ hasRule: false })
   const [message, setMessage] = useState("")
   const [busy, setBusy] = useState(false)
   const [selectedProviderId, setSelectedProviderId] = useState("")
@@ -69,6 +71,12 @@ function PopupApp() {
       catch {
         setStatus(null)
       }
+      try {
+        setSiteRuleStatus(await sendTabMessage(tab.id, "GET_PAGE_SITE_RULE_STATUS"))
+      }
+      catch {
+        setSiteRuleStatus({ hasRule: false })
+      }
     }
 
     setSelectedProviderId(nextStatus?.providerId ?? nextConfig.activeProviderId ?? nextConfig.providers[0]?.id ?? "")
@@ -80,6 +88,29 @@ function PopupApp() {
 
   async function stopTranslation() {
     await runTabAction("STOP_TRANSLATION")
+  }
+
+  async function selectTranslationRegions() {
+    setBusy(true)
+    setMessage("")
+    try {
+      const tab = await getActiveTab()
+      if (!tab?.id) {
+        throw new Error(t(locale, "noActiveTabFound"))
+      }
+      await sendTabMessage(tab.id, "START_RULE_SELECTION", {
+        providerId: selectedProviderId,
+        progressPosition: config?.progressPosition ?? "bottom-center",
+        uiLocale: locale,
+      })
+      window.close()
+    }
+    catch (error) {
+      setMessage(error instanceof Error ? error.message : String(error))
+    }
+    finally {
+      setBusy(false)
+    }
   }
 
   async function runTabAction(type: "START_TRANSLATION" | "STOP_TRANSLATION") {
@@ -159,6 +190,14 @@ function PopupApp() {
               : t(locale, "idle")}
           </strong>
         </div>
+        <div>
+          <span className="label">{t(locale, "rule")}</span>
+          <strong title={siteRuleStatus.ruleName}>
+            {siteRuleStatus.hasRule
+              ? `${t(locale, "ruleAvailable")} · ${siteRuleStatus.ruleName ?? siteRuleStatus.ruleId ?? ""}`
+              : t(locale, "genericRule")}
+          </strong>
+        </div>
       </section>
 
       {!isReady && (
@@ -174,6 +213,9 @@ function PopupApp() {
         <button type="button" disabled={busy} className="secondary" onClick={stopTranslation}>
           {t(locale, "stop")}
         </button>
+        <button type="button" disabled={busy} className="secondary" onClick={selectTranslationRegions}>
+          {t(locale, "selectTranslationRegions")}
+        </button>
         <button type="button" className="ghost" onClick={openSettings}>
           {t(locale, "openSettings")}
         </button>
@@ -187,4 +229,7 @@ async function getActiveTab(): Promise<chrome.tabs.Tab | undefined> {
   return tabs[0]
 }
 
-createRoot(document.getElementById("root")!).render(<PopupApp />)
+const root = document.getElementById("root")
+if (root) {
+  createRoot(root).render(<PopupApp />)
+}

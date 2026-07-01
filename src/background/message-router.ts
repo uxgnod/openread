@@ -2,6 +2,13 @@ import { messageError, type OpenReadMessage, type OpenReadResponse, isOpenReadMe
 import type { ResponseMap } from "@/shared/messages"
 import { getConfig, saveConfig, assertUsableConfig } from "./config-store"
 import { testOpenAICompatibleProvider, translateWithOpenAICompatible } from "./providers/openai-compatible"
+import {
+  deleteSiteRule,
+  exportRulePack,
+  importRulePack,
+  readSiteRules,
+  writeSiteRule,
+} from "./site-rule-store"
 import { getCachedTranslation, setCachedTranslation, translationCacheKey } from "./translation-cache"
 import { TranslationQueue, withRetries } from "./translation-queue"
 
@@ -27,6 +34,16 @@ async function handleRuntimeMessage(message: OpenReadMessage): Promise<ResponseM
       return getConfig()
     case "SAVE_CONFIG":
       return saveConfig(message.payload)
+    case "GET_SITE_RULES":
+      return readSiteRules()
+    case "SAVE_SITE_RULE":
+      return writeSiteRule(message.payload)
+    case "DELETE_SITE_RULE":
+      return deleteSiteRule(message.payload)
+    case "EXPORT_SITE_RULE":
+      return exportRulePack(message.payload)
+    case "IMPORT_SITE_RULE":
+      return importRulePack(message.payload)
     case "TEST_PROVIDER":
       assertUsableConfig(message.payload, message.payload.activeProviderId)
       return testOpenAICompatibleProvider(message.payload)

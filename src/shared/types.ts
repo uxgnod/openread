@@ -1,4 +1,5 @@
 import type { UiLocale, UiLocalePreference } from "./i18n"
+import type { SiteRulePack } from "./site-rules"
 
 export interface ProviderConfig {
   id: string
@@ -30,7 +31,9 @@ export interface TranslateFragmentRequest {
 export interface StartTranslationRequest {
   providerId: string
   inputTranslationEnabled: boolean
+  inlineSiteRule?: SiteRulePack
   progressPosition: ProgressPosition
+  siteRuleId?: string
   uiLocale: UiLocale
 }
 
@@ -61,6 +64,8 @@ export interface TestProviderResponse {
 }
 
 export interface PageTranslationState {
+  activeSiteRuleId?: string
+  activeSiteRuleName?: string
   isActive: boolean
   providerId?: string
   translatedCount: number
