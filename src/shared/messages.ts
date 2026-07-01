@@ -1,5 +1,7 @@
 import type {
   PageTranslationState,
+  OpenSelectionTranslationRequest,
+  OpenSelectionTranslationResponse,
   SetPageProviderRequest,
   StartTranslationRequest,
   TestProviderResponse,
@@ -15,6 +17,7 @@ export interface RequestMap {
   TRANSLATE_FRAGMENT: TranslateFragmentRequest
   SET_PAGE_PROVIDER: SetPageProviderRequest
   START_TRANSLATION: StartTranslationRequest
+  OPEN_SELECTION_TRANSLATION: OpenSelectionTranslationRequest
   STOP_TRANSLATION: undefined
   GET_PAGE_TRANSLATION_STATE: undefined
 }
@@ -26,6 +29,7 @@ export interface ResponseMap {
   TRANSLATE_FRAGMENT: TranslateFragmentResponse
   SET_PAGE_PROVIDER: PageTranslationState
   START_TRANSLATION: PageTranslationState
+  OPEN_SELECTION_TRANSLATION: OpenSelectionTranslationResponse
   STOP_TRANSLATION: PageTranslationState
   GET_PAGE_TRANSLATION_STATE: PageTranslationState
 }

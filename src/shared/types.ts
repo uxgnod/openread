@@ -34,6 +34,14 @@ export interface StartTranslationRequest {
   uiLocale: UiLocale
 }
 
+export interface OpenSelectionTranslationRequest {
+  sourceText: string
+}
+
+export interface OpenSelectionTranslationResponse {
+  cardId: string
+}
+
 export interface SetPageProviderRequest {
   providerId: string
   inputTranslationEnabled: boolean

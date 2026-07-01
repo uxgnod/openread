@@ -3,6 +3,7 @@ import {
   OPENREAD_INPUT_STATUS_CLASS,
   OPENREAD_LOADING_CLASS,
   OPENREAD_PROGRESS_CLASS,
+  OPENREAD_SELECTION_CARD_CLASS,
   OPENREAD_SOURCE_CLASS,
   OPENREAD_WRAPPER_CLASS,
 } from "@/shared/dom-rules"
@@ -386,6 +387,196 @@ export function injectBaseStyles(): void {
       font-size: 12px;
       font-weight: 650;
       line-height: 1.2;
+      padding: 7px 11px;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS} {
+      background:
+        linear-gradient(135deg, rgba(255, 253, 247, 0.82), rgba(240, 238, 230, 0.58)),
+        radial-gradient(circle at 14% 8%, rgba(255, 255, 255, 0.58), transparent 32%);
+      backdrop-filter: blur(22px) saturate(1.42);
+      -webkit-backdrop-filter: blur(22px) saturate(1.42);
+      border: 1px solid rgba(255, 255, 255, 0.56);
+      border-radius: 8px;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.72),
+        0 18px 48px rgba(20, 20, 19, 0.22),
+        0 0 0 1px rgba(216, 210, 194, 0.34);
+      box-sizing: border-box;
+      color: #141413;
+      display: flex;
+      flex-direction: column;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.55;
+      max-height: min(360px, calc(100vh - 32px));
+      overflow: hidden;
+      padding: 10px;
+      pointer-events: auto;
+      position: fixed;
+      width: min(380px, calc(100vw - 24px));
+      z-index: 2147483647;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}[data-openread-pinned="true"] {
+      border-color: rgba(217, 119, 87, 0.68);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.72),
+        0 18px 48px rgba(20, 20, 19, 0.24),
+        0 0 0 1px rgba(217, 119, 87, 0.24);
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}__topbar {
+      align-items: center;
+      cursor: grab;
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      min-height: 34px;
+      user-select: none;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}[data-openread-dragging="true"] .${OPENREAD_SELECTION_CARD_CLASS}__topbar {
+      cursor: grabbing;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}__language-pair {
+      align-items: center;
+      background:
+        linear-gradient(180deg, rgba(255, 253, 247, 0.62), rgba(232, 230, 220, 0.42));
+      border: 1px solid rgba(20, 20, 19, 0.08);
+      border-radius: 7px;
+      color: #3d3d3a;
+      display: inline-flex;
+      flex: 1 1 auto;
+      font-size: 11px;
+      font-weight: 700;
+      gap: 6px;
+      letter-spacing: 0;
+      min-width: 0;
+      padding: 4px;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}__language {
+      background: rgba(255, 253, 247, 0.74);
+      border: 1px solid rgba(20, 20, 19, 0.06);
+      border-radius: 5px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      color: #3d3d3a;
+      min-width: 46px;
+      overflow: hidden;
+      padding: 5px 8px;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}__language[data-openread-language-role="target"] {
+      color: #8f3f2b;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}__arrow {
+      color: #8f3f2b;
+      flex: 0 0 auto;
+      height: 14px;
+      opacity: 0.92;
+      width: 34px;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}__actions {
+      display: inline-flex;
+      flex: 0 0 auto;
+      gap: 4px;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}__icon-button {
+      align-items: center;
+      background: rgba(255, 253, 247, 0.74);
+      border: 1px solid rgba(20, 20, 19, 0.1);
+      border-radius: 7px;
+      color: #3d3d3a;
+      cursor: pointer;
+      display: inline-flex;
+      height: 32px;
+      justify-content: center;
+      padding: 0;
+      width: 32px;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}__icon-button:hover {
+      background: rgba(255, 253, 247, 0.94);
+      color: #141413;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}__icon-button[data-openread-active="true"] {
+      background: rgba(217, 119, 87, 0.16);
+      border-color: rgba(217, 119, 87, 0.4);
+      color: #8f3f2b;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}__icon-button svg {
+      display: block;
+      height: 18px;
+      width: 18px;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}__body {
+      background: rgba(255, 253, 247, 0.66);
+      border: 1px solid rgba(216, 210, 194, 0.58);
+      border-radius: 7px;
+      color: #141413;
+      margin-top: 8px;
+      max-height: min(276px, calc(100vh - 104px));
+      overflow: auto;
+      padding: 11px 12px;
+      scrollbar-width: thin;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}__tip {
+      color: #6f6b62;
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.35;
+      margin: 8px 2px 0;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}__body a {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: 0.14em;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}__body code,
+    .${OPENREAD_SELECTION_CARD_CLASS}__body kbd,
+    .${OPENREAD_SELECTION_CARD_CLASS}__body samp,
+    .${OPENREAD_SELECTION_CARD_CLASS}__body var {
+      background: rgba(20, 20, 19, 0.07);
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      padding: 0.08em 0.3em;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}[data-openread-status="loading"] .${OPENREAD_SELECTION_CARD_CLASS}__body {
+      color: #6f6b62;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}[data-openread-status="error"] .${OPENREAD_SELECTION_CARD_CLASS}__body {
+      background: rgba(255, 241, 234, 0.86);
+      border-color: rgba(217, 119, 87, 0.36);
+      color: #9f3d2b;
+    }
+
+    .${OPENREAD_SELECTION_CARD_CLASS}__retry-button {
+      background: #141413;
+      border: 0;
+      border-radius: 999px;
+      color: #ffffff;
+      cursor: pointer;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 650;
+      line-height: 1.2;
+      margin-top: 10px;
       padding: 7px 11px;
     }
 

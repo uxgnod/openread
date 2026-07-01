@@ -4,9 +4,9 @@
 >
 > 进行中：OpenRead 仍然是一个很早期、很粗糙的浏览器扩展。核心阅读链路已经可以跑通，但还有很多 bug、边界情况和针对具体网站的优化要做。
 
-OpenRead is an open-source, BYOK browser extension for bilingual web translation. It is inspired by Immersive Translate, but it is intentionally simpler: an open, hackable version built around my own reading needs, without being tied to a membership subscription or bundled provider plan.
+OpenRead is an open-source, BYOK browser extension for bilingual web reading. It translates web pages in place, supports quick right-click selection translation, and stays intentionally hackable: bring your own OpenAI-compatible provider, tune the prompts, and keep the reading workflow under your control.
 
-OpenRead 是一个开源、开放 BYOK（Bring Your Own Key）的双语网页翻译浏览器扩展。它受沉浸式翻译启发，但目标更简单：基于我自己的阅读需求，做一个可修改、可自托管配置、不和会员订阅或内置服务商套餐绑定的简化版本。
+OpenRead 是一个开源、开放 BYOK（Bring Your Own Key）的双语网页阅读浏览器扩展。它支持网页内双语翻译，也支持右键划词快速翻译；整体目标是保持可修改、可自托管配置、不和会员订阅或内置服务商套餐绑定。
 
 ## Current Status / 当前状态
 
@@ -24,6 +24,7 @@ Already implemented:
 - Reading display modes: original, translation-only, and bilingual.
 - Progress chip with position settings, percentage progress, and completion animation.
 - Toggleable triple-space input translation for text inputs and textareas, currently translating input content to English by default, with floating status and undo.
+- Right-click selection translation using the browser's native context menu, with a draggable liquid-glass result card, pin mode, close action, and scrollable long results.
 - Built-in UI i18n for 10 interface languages.
 - Stop translation cleanup for injected wrappers and page state.
 
@@ -41,6 +42,7 @@ Already implemented:
 - 阅读显示模式：原文、仅译文、双语。
 - 支持位置设置、百分比进度和完成动画的进度 chip。
 - 可开关的输入框三击空格翻译：支持 text input 和 textarea，目前默认把输入内容翻译成英文，并提供浮动状态和撤销。
+- 右键划词翻译：使用浏览器原生右键菜单触发，在选区附近显示可拖动的 liquid-glass 结果卡片，支持 pin、关闭和长译文滚动。
 - 内置界面文本 i18n，当前支持 10 种界面语言。
 - 停止翻译时清理注入 wrapper 和页面状态。
 
@@ -89,6 +91,7 @@ Implemented in the current MVP:
 - Original / translation / bilingual display modes.
 - Progress chip with percentage and completion animation.
 - Toggleable triple-space input and textarea translation to English, including floating progress/completion status and undo.
+- Native context-menu selection translation with a draggable, pinnable floating card.
 - Basic i18n for extension UI.
 
 当前 MVP 已实现：
@@ -100,6 +103,7 @@ Implemented in the current MVP:
 - 原文 / 译文 / 双语显示模式。
 - 百分比进度 chip 和完成动画。
 - 可开关的输入框和 textarea 三击空格翻译成英文，包含浮动进度/完成状态和撤销。
+- 浏览器原生右键菜单划词翻译，结果显示在可拖动、可固定的浮窗中。
 - 扩展 UI 的基础 i18n。
 
 Planned:
@@ -116,7 +120,7 @@ Planned:
 - Reusable site plans/templates for known websites.
 - Agent-style translation plans for multi-step page adaptation.
 - Better inline style preservation, especially for code, links, and technical documents.
-- PDF, subtitle, image/OCR, and selection translation experiments.
+- PDF, subtitle, and image/OCR translation experiments.
 - More provider adapters beyond OpenAI-compatible APIs.
 - Better tests with real-world pages and visual regression checks.
 
@@ -134,7 +138,7 @@ Planned:
 - 针对常见网站的可复用 site plans/templates。
 - 面向 agent 的多步翻译计划，用于适配复杂页面。
 - 更好的 inline 样式保留，尤其是代码、链接和技术文档。
-- PDF、字幕、图片/OCR、划词翻译等实验。
+- PDF、字幕、图片/OCR 等实验。
 - OpenAI-compatible 之外的更多 provider adapter。
 - 更多真实网页测试和视觉回归检查。
 
@@ -163,9 +167,9 @@ pnpm zip
 
 ## Manual Install from GitHub Release / 从 GitHub Release 手动安装
 
-GitHub Release builds are developer-mode packages for early testing. They are not a Chrome Web Store one-click install.
+GitHub Release builds are developer-mode packages for early testing. They are not a Chrome Web Store one-click install, and they are best suited for technical users who are comfortable loading unpacked extensions.
 
-1. Download the release zip, for example `openread-chrome-mv3-v0.1.0.zip`.
+1. Download the release zip, for example `openread-chrome-mv3-v0.1.1.zip`.
 2. Unzip it locally.
 3. Open `chrome://extensions`.
 4. Enable **Developer mode**.
@@ -174,9 +178,9 @@ GitHub Release builds are developer-mode packages for early testing. They are no
 
 For regular users, the intended distribution channel will be the Chrome Web Store after review.
 
-GitHub Release 中的构建包用于早期测试，需要通过开发者模式手动加载，并不是 Chrome Web Store 的一键安装。
+GitHub Release 中的构建包用于早期测试，需要通过开发者模式手动加载，并不是 Chrome Web Store 的一键安装；它更适合愿意手动加载 unpacked extension 的技术用户。
 
-1. 下载 release zip，例如 `openread-chrome-mv3-v0.1.0.zip`。
+1. 下载 release zip，例如 `openread-chrome-mv3-v0.1.1.zip`。
 2. 在本地解压。
 3. 打开 `chrome://extensions`。
 4. 启用 **Developer mode / 开发者模式**。
@@ -242,6 +246,12 @@ Interface languages:
 ## Architecture / 架构
 
 See [docs/architecture.md](docs/architecture.md).
+
+## Store Listing Draft / 商店上架文案草稿
+
+See [docs/store-listing.md](docs/store-listing.md) for the future Chrome Web Store description, permission rationale, and privacy notes.
+
+未来 Chrome Web Store 的说明文案、权限说明和隐私提示见 [docs/store-listing.md](docs/store-listing.md)。
 
 ## Branding / 品牌
 
