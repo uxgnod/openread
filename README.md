@@ -1,204 +1,91 @@
 # OpenRead
 
-> WIP: OpenRead is still an early, rough browser extension. It works for the core reading loop, but there are many bugs, edge cases, and site-specific optimizations still to do.
->
-> 进行中：OpenRead 仍然是一个很早期、很粗糙的浏览器扩展。核心阅读链路已经可以跑通，但还有很多 bug、边界情况和针对具体网站的优化要做。
+OpenRead is an open-source browser extension for painless reading across languages. It translates foreign-language web pages in place, keeps the original context visible, and lets you use your own OpenAI-compatible LLM provider instead of being locked into a bundled subscription.
 
-OpenRead is an open-source, BYOK browser extension for bilingual web reading. It translates web pages in place, supports quick right-click selection translation, and stays intentionally hackable: bring your own OpenAI-compatible provider, tune the prompts, and keep the reading workflow under your control.
+OpenRead 是一个开源浏览器插件，让阅读外语网页更无痛：它在原网页内进行双语翻译，尽量保留原始上下文，并允许你使用自己的 OpenAI-compatible LLM provider，而不是绑定某个内置订阅套餐。完整中文说明见 [中文版](README.zh-CN.md)。
 
-OpenRead 是一个开源、开放 BYOK（Bring Your Own Key）的双语网页阅读浏览器扩展。它支持网页内双语翻译，也支持右键划词快速翻译；整体目标是保持可修改、可自托管配置、不和会员订阅或内置服务商套餐绑定。
+<p align="center">
+  <img src="docs/branding/openread-readme-banner.svg" alt="OpenRead turns foreign-language pages into bilingual reading with your own LLM provider." width="100%">
+</p>
 
-## Current Status / 当前状态
+<p align="center">
+  <strong>Open the web. Read every language. Bring your own key.</strong>
+</p>
 
-Already implemented:
+<p align="center">
+  <a href="README.zh-CN.md">中文版</a>
+  ·
+  <a href="docs/site-rules-and-agent-tools.md">Site Rules</a>
+  ·
+  <a href="docs/architecture.md">Architecture</a>
+  ·
+  <a href="docs/store-listing.md">Store listing draft</a>
+</p>
 
-- Chrome MV3 extension built with WXT, React, TypeScript, and pnpm.
-- Popup starts and stops translation for the active tab.
-- Options page stores multiple OpenAI-compatible providers.
-- Each page translation run chooses its provider from the popup, so different tabs can use different providers.
-- OpenAI-compatible `/chat/completions` provider with queueing, retries, timeout handling, and local cache.
-- BYOK configuration: Base URL, API key, model, target language, system prompt, and user prompt.
-- Fragment-based translation: OpenRead sends one sanitized DOM fragment at a time, not the full page HTML.
-- Lazy page translation using `IntersectionObserver`.
-- Best-effort bilingual DOM rendering with links, emphasis, spans, inline code, and some source styles preserved.
-- Reading display modes: original, translation-only, and bilingual.
-- Progress chip with position settings, percentage progress, and completion animation.
-- Toggleable triple-space input translation for text inputs and textareas, currently translating input content to English by default, with floating status and undo.
-- Right-click selection translation using the browser's native context menu, with a draggable liquid-glass result card, pin mode, close action, and scrollable long results.
-- Built-in UI i18n for 10 interface languages.
-- Stop translation cleanup for injected wrappers and page state.
+<p align="center">
+  <img alt="Version 0.2.0" src="https://img.shields.io/badge/version-0.2.0-D97757?style=flat-square">
+  <img alt="License Apache 2.0" src="https://img.shields.io/badge/license-Apache--2.0-141413?style=flat-square">
+  <img alt="Chrome MV3" src="https://img.shields.io/badge/Chrome-MV3-5F7F3F?style=flat-square">
+  <img alt="BYOK" src="https://img.shields.io/badge/BYOK-OpenAI--compatible-8F3F2B?style=flat-square">
+</p>
 
-已经实现：
+## What Is OpenRead?
 
-- 基于 WXT、React、TypeScript、pnpm 的 Chrome MV3 扩展。
-- Popup 支持对当前标签页开始/停止翻译。
-- Options 页面支持保存多个 OpenAI-compatible provider。
-- 每个页面翻译运行时从 popup 选择 provider，不同标签页可以使用不同 provider。
-- OpenAI-compatible `/chat/completions` provider，包含队列、重试、超时处理和本地缓存。
-- BYOK 配置：Base URL、API key、模型、目标语言、system prompt、user prompt。
-- 按片段翻译：OpenRead 每次只发送一个 sanitized DOM fragment，不发送整页 HTML。
-- 基于 `IntersectionObserver` 的懒翻译。
-- 尽力保留 DOM 语义和样式的双语渲染，包括链接、强调、span、inline code 和部分源样式。
-- 阅读显示模式：原文、仅译文、双语。
-- 支持位置设置、百分比进度和完成动画的进度 chip。
-- 可开关的输入框三击空格翻译：支持 text input 和 textarea，目前默认把输入内容翻译成英文，并提供浮动状态和撤销。
-- 右键划词翻译：使用浏览器原生右键菜单触发，在选区附近显示可拖动的 liquid-glass 结果卡片，支持 pin、关闭和长译文滚动。
-- 内置界面文本 i18n，当前支持 10 种界面语言。
-- 停止翻译时清理注入 wrapper 和页面状态。
+OpenRead is a Chrome MV3 extension for careful bilingual web reading. It is built for articles, documentation, research pages, technical posts, GitHub READMEs, Substack essays, and other pages where keeping the original layout and context matters.
 
-## Important Warnings / 重要说明
+The project is still early developer-mode software. It works for the core reading loop, but complex pages can still expose DOM fidelity issues, awkward spacing, missed blocks, or site-specific edge cases.
 
-- This is not production-ready.
-- DOM fidelity is best-effort and will break on some complex pages.
-- The translation selection rules are still generic and need many site-specific improvements.
-- Some pages may produce awkward spacing, duplicated candidates, missed elements, or imperfect inline style preservation.
-- Provider errors are surfaced, but the user experience still needs polish.
-- API keys are stored locally in `chrome.storage.local`; do not commit keys or put them in environment variables.
+## Why BYOK?
 
-- 这不是生产可用版本。
-- DOM 保真只是尽力而为，复杂页面上一定会有破损。
-- 当前翻译区域选择规则仍然比较通用，需要大量针对具体网站的优化。
-- 一些页面可能出现间距不自然、候选块重复、漏翻、inline 样式保留不完整等问题。
-- Provider 错误已经会展示出来，但整体体验还需要打磨。
-- API key 只存储在本地 `chrome.storage.local`，不要提交 key，也不要把 key 写进环境变量。
+OpenRead is intentionally bring-your-own-key:
 
-## Why / 为什么做
+- You configure your own OpenAI-compatible `/chat/completions` provider.
+- You can choose the model, endpoint, target language, and prompts.
+- Translation requests go directly to the provider you configure, not through an OpenRead subscription service.
+- The extension stays inspectable, hackable, and suitable for personal reading workflows.
 
-Immersive Translate is a great product and the main inspiration for this project. OpenRead is not trying to clone every feature. The goal is to explore a smaller open-source path:
+## Features
 
-- open code
-- open BYOK provider configuration
-- no forced subscription bundle
-- easier experimentation with prompts, agents, DOM rules, and site-specific plans
-- a translation tool shaped by real personal reading workflows
+- Page translation in place, triggered from the popup.
+- Original, translation-only, and bilingual display modes.
+- Lazy fragment translation with `IntersectionObserver`.
+- One sanitized DOM fragment per provider request, rather than sending the whole page HTML at once.
+- OpenAI-compatible provider profiles with Base URL, API key, model, target language, system prompt, and user prompt.
+- Per-page provider selection from the popup.
+- Local translation cache, queueing, retries, and timeout handling.
+- Right-click selection translation with a draggable, pinnable floating result card.
+- Optional triple-space input translation for text inputs and textareas.
+- Progress chip with configurable position, percentage progress, and completion animation.
+- UI localization for 10 interface languages.
+- Settings page with sidebar navigation, autosave, provider test feedback, and a searchable saved Site Rules view.
+- JSON Site Rules for page-specific translation regions, including popup rule status, manual multi-region selection, saved rule loading, and generic fallback when no rule matches.
 
-沉浸式翻译是一个很好的产品，也是这个项目的主要灵感来源。OpenRead 并不是要完整复刻它的所有功能，而是想探索一个更小的开源路线：
+## How It Works
 
-- 代码开放
-- Provider 配置开放，用户自带 key
-- 不绑定会员订阅套餐
-- 更容易实验 prompt、agent、多步流程、DOM 规则和站点模板
-- 从真实个人阅读工作流出发，慢慢打磨翻译工具
+OpenRead keeps translation local to page structure:
 
-## Roadmap / 路线图
+1. The content script collects translatable blocks from the current page.
+2. If a saved Site Rule matches the current page, the rule defines the translation boundaries.
+3. Large selected containers, such as a GitHub README area, are treated as boundaries; internal paragraphs, list items, headings, and blockquotes are still translated at normal block granularity.
+4. Each sanitized fragment is translated through your configured provider.
+5. The translated content is inserted back into the original DOM unit so reading rhythm and links remain as intact as possible.
 
-Implemented in the current MVP:
+Provider calls, cache, prompt rendering, stop cleanup, and rich text rendering stay shared across generic translation and rule-based translation.
 
-- Configurable OpenAI-compatible provider profiles.
-- Popup-triggered page translation.
-- Fragment-level lazy translation.
-- Bilingual rendering with best-effort DOM fidelity.
-- Original / translation / bilingual display modes.
-- Progress chip with percentage and completion animation.
-- Toggleable triple-space input and textarea translation to English, including floating progress/completion status and undo.
-- Native context-menu selection translation with a draggable, pinnable floating card.
-- Basic i18n for extension UI.
+## Install From GitHub Release
 
-当前 MVP 已实现：
+GitHub Release builds are early developer-mode packages. They are not Chrome Web Store one-click installs.
 
-- 可配置的 OpenAI-compatible provider profiles。
-- 从 popup 触发页面翻译。
-- 按 fragment 懒翻译。
-- 尽力保留 DOM 的双语渲染。
-- 原文 / 译文 / 双语显示模式。
-- 百分比进度 chip 和完成动画。
-- 可开关的输入框和 textarea 三击空格翻译成英文，包含浮动进度/完成状态和撤销。
-- 浏览器原生右键菜单划词翻译，结果显示在可拖动、可固定的浮窗中。
-- 扩展 UI 的基础 i18n。
-
-Planned:
-
-- Better visibility rules so hidden or irrelevant DOM is not counted or translated.
-- Faster concurrent translation with smarter batching, request scheduling, and cache reuse.
-- Configurable input translation target language.
-- Automatic dialog/input language detection for chat, comments, and reply boxes.
-- Automatic page-language detection for choosing page translation targets.
-- Dark-mode-aware styling for the floating page progress chip and input translation status chip.
-- Automatic translation for video websites, including subtitles and possibly transcript panels.
-- Floating page toolbar for quick translation controls.
-- DOM inspector and multi-select translation regions.
-- Reusable site plans/templates for known websites.
-- Agent-style translation plans for multi-step page adaptation.
-- Better inline style preservation, especially for code, links, and technical documents.
-- PDF, subtitle, and image/OCR translation experiments.
-- More provider adapters beyond OpenAI-compatible APIs.
-- Better tests with real-world pages and visual regression checks.
-
-计划中：
-
-- 更严格的可见性判断，避免隐藏或无关 DOM 进入统计和翻译流程。
-- 更快的并发翻译：更智能的 batching、请求调度和缓存复用。
-- 可配置的输入框翻译目标语言。
-- 针对聊天、评论、回复框等场景的对话/输入语言自动识别。
-- 自动识别页面语言，并据此选择网页翻译目标语言。
-- 为页面进度提示框和输入翻译状态框补充 dark mode 适配。
-- 视频网站自动翻译，包括字幕，未来也可能支持 transcript 面板。
-- 页面浮动工具栏，用于快速控制翻译。
-- DOM inspector 和多选翻译区域。
-- 针对常见网站的可复用 site plans/templates。
-- 面向 agent 的多步翻译计划，用于适配复杂页面。
-- 更好的 inline 样式保留，尤其是代码、链接和技术文档。
-- PDF、字幕、图片/OCR 等实验。
-- OpenAI-compatible 之外的更多 provider adapter。
-- 更多真实网页测试和视觉回归检查。
-
-## Development / 开发
-
-```bash
-pnpm install
-pnpm dev
-```
-
-Load the generated extension from `.output/chrome-mv3` as an unpacked Chrome extension.
-
-在 Chrome 扩展管理页中加载 `.output/chrome-mv3` 作为 unpacked extension。
-
-Production build:
-
-```bash
-pnpm build
-```
-
-Package a Chrome MV3 zip for manual testing or GitHub Releases:
-
-```bash
-pnpm zip
-```
-
-## Manual Install from GitHub Release / 从 GitHub Release 手动安装
-
-GitHub Release builds are developer-mode packages for early testing. They are not a Chrome Web Store one-click install, and they are best suited for technical users who are comfortable loading unpacked extensions.
-
-1. Download the release zip, for example `openread-chrome-mv3-v0.1.1.zip`.
+1. Download the release zip, for example `openread-chrome-mv3-v0.2.0.zip`.
 2. Unzip it locally.
 3. Open `chrome://extensions`.
-4. Enable **Developer mode**.
-5. Click **Load unpacked**.
+4. Enable Developer mode.
+5. Click Load unpacked.
 6. Select the unzipped extension directory.
 
 For regular users, the intended distribution channel will be the Chrome Web Store after review.
 
-GitHub Release 中的构建包用于早期测试，需要通过开发者模式手动加载，并不是 Chrome Web Store 的一键安装；它更适合愿意手动加载 unpacked extension 的技术用户。
-
-1. 下载 release zip，例如 `openread-chrome-mv3-v0.1.1.zip`。
-2. 在本地解压。
-3. 打开 `chrome://extensions`。
-4. 启用 **Developer mode / 开发者模式**。
-5. 点击 **Load unpacked / 加载已解压的扩展程序**。
-6. 选择解压后的扩展目录。
-
-面向普通用户的正式分发渠道会是审核后的 Chrome Web Store。
-
-## Validation / 验证
-
-```bash
-pnpm test
-pnpm type-check
-pnpm lint
-pnpm build
-```
-
-## Configuration / 配置
+## Configure Your Provider
 
 Open the extension options page and set:
 
@@ -212,53 +99,94 @@ Open the extension options page and set:
 - System prompt
 - User prompt
 
-打开扩展设置页，配置：
-
-- Provider 名称
-- Base URL，例如 `https://api.openai.com/v1`
-- API Key
-- 模型，例如 `gpt-4o-mini`
-- 目标语言
-- 界面语言
-- 进度 chip 位置
-- System prompt
-- User prompt
-
 Prompt variables:
 
 - `{{targetLanguage}}`
 - `{{sourceHtml}}`
 - `{{sourceText}}`
 
-Interface languages:
+## Site Rules
 
-- English (`en`)
-- Simplified Chinese (`zh-CN`)
-- Traditional Chinese (`zh-TW`)
-- Russian (`ru`)
-- Japanese (`ja`)
-- Korean (`ko`)
-- Spanish (`es`)
-- French (`fr`)
-- German (`de`)
-- Vietnamese (`vi`)
+Site Rules are deterministic JSON rule packs that decide which page regions are translated. They are designed for:
 
-## Architecture / 架构
+- manual multi-region selection in the page inspector
+- future agent or voice-driven rule creation
+- page translation execution
 
-See [docs/architecture.md](docs/architecture.md).
+The first UI lets users add translation regions and save a rule for the current page, same page type, entire site, matching subdomains, or a custom scope. Existing excludes are preserved by the schema and engine, while full exclude editing is planned for a later rule-management UI.
 
-## Store Listing Draft / 商店上架文案草稿
+See [Site Rules and Agent Tools](docs/site-rules-and-agent-tools.md) for the JSON shape, matching behavior, tool messages, and agent workflow.
 
-See [docs/store-listing.md](docs/store-listing.md) for the future Chrome Web Store description, permission rationale, and privacy notes.
+## Roadmap
 
-未来 Chrome Web Store 的说明文案、权限说明和隐私提示见 [docs/store-listing.md](docs/store-listing.md)。
+Planned:
 
-## Branding / 品牌
+- Better visibility rules so hidden or irrelevant DOM is not counted or translated.
+- Faster concurrent translation with smarter batching, request scheduling, and cache reuse.
+- Configurable input translation target language.
+- Automatic dialog/input language detection for chat, comments, and reply boxes.
+- Automatic page-language detection for choosing page translation targets.
+- Dark-mode-aware styling for the floating page progress chip and input translation status chip.
+- Automatic translation for video websites, including subtitles and possibly transcript panels.
+- Floating page toolbar for quick translation controls.
+- Full rule management UI for editing, deleting, importing, and exporting Site Rules.
+- Reusable site templates for known websites.
+- Agent-style or voice-driven flows that generate, preview, and apply deterministic Site Rules.
+- Explore a future provider path for users who prefer using a ChatGPT subscription, if a stable and compliant integration path exists.
+- Better inline style preservation, especially for code, links, and technical documents.
+- PDF, subtitle, and image/OCR translation experiments.
+- More provider adapters beyond OpenAI-compatible APIs.
+- More real-world page tests and visual regression checks.
 
-See [BRANDING.md](BRANDING.md) for the current slogan, palette, icon direction, and visual rules.
+## Development
 
-品牌口号、配色、图标方向和视觉规则见 [BRANDING.md](BRANDING.md)。
+```bash
+pnpm install
+pnpm dev
+```
 
-## License / 许可证
+Load the generated extension from `.output/chrome-mv3` as an unpacked Chrome extension.
 
-Apache-2.0
+Production build:
+
+```bash
+pnpm build
+```
+
+Package a Chrome MV3 zip for manual testing or GitHub Releases:
+
+```bash
+pnpm zip
+```
+
+Validation:
+
+```bash
+pnpm test
+pnpm type-check
+pnpm lint
+pnpm build
+```
+
+## Privacy And Permissions
+
+OpenRead stores configuration locally in `chrome.storage.local`. API keys are not committed, bundled, or sent to an OpenRead server.
+
+When translation is requested, selected text or page fragments are sent to the provider configured by the user. Users should review the privacy policy and data handling terms of their chosen provider.
+
+Permissions:
+
+- `storage`: saves provider profiles, prompts, language settings, display settings, Site Rules, and local translation cache.
+- `tabs` and `activeTab`: sends popup or context-menu commands to the current tab.
+- `contextMenus`: adds the native right-click selected-text translation action.
+- `scripting`: injects the content script on demand when a page has no active receiver yet.
+- `<all_urls>` host permission: allows page translation, selection translation, and Site Rule inspection across ordinary webpages.
+
+## Docs
+
+- [Architecture](docs/architecture.md)
+- [Site Rules and Agent Tools](docs/site-rules-and-agent-tools.md)
+- [Store Listing Draft](docs/store-listing.md)
+- [Branding](BRANDING.md)
+- [Design Notes](DESIGN.md)
+- [Contributing](CONTRIBUTING.md)

@@ -6,7 +6,7 @@ export default defineConfig({
   manifestVersion: 3,
   manifest: () => ({
     name: "OpenRead",
-    description: "Open-source BYOK bilingual reading with page and selection translation.",
+    description: "Open-source BYOK web translation for painless bilingual reading.",
     permissions: ["activeTab", "contextMenus", "scripting", "storage", "tabs"],
     host_permissions: ["<all_urls>"],
     icons: {

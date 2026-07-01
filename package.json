@@ -1,7 +1,7 @@
 {
   "name": "openread",
-  "version": "0.1.1",
-  "description": "OpenRead is an open-source BYOK browser extension for bilingual web reading and selection translation.",
+  "version": "0.2.0",
+  "description": "OpenRead is an open-source BYOK browser extension for painless bilingual web reading.",
   "type": "module",
   "private": true,
   "license": "Apache-2.0",
